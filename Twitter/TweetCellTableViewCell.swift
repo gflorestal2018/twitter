@@ -11,6 +11,7 @@ import UIKit
 class TweetCellTableViewCell: UITableViewCell {
     var favorited:Bool = false
     var tweetId:Int = -1
+    
     func setFavorited(_ isFavorited:Bool){
         favorited = isFavorited
         if(favorited){
@@ -19,6 +20,15 @@ class TweetCellTableViewCell: UITableViewCell {
             favButton.setImage(UIImage(named: "favor-icon-1"), for: UIControl.State.normal)
         }
     }
+    func setRetweeted(_ isRetweeted:Bool ){
+        if (isRetweeted){
+            rtButton.setImage(UIImage(named: "retweet-icon-green"), for: UIControl.State.normal)
+            rtButton.isEnabled = false
+        } else {
+            rtButton.setImage(UIImage(named: "retweet-icon"), for: UIControl.State.normal)
+        }
+        
+    }
     @IBOutlet weak var profileImageView: UIImageView!
     @IBOutlet weak var tweetContent: UILabel!
     @IBOutlet weak var usernameLabel: UILabel!
@@ -26,6 +36,11 @@ class TweetCellTableViewCell: UITableViewCell {
     @IBOutlet weak var rtButton: UIButton!
     
     @IBAction func retweetTweet(_ sender: Any) {
+        TwitterAPICaller.client?.retweet(tweetId: tweetId, success: {
+            self.setRetweeted(true)
+        }, failure: { (error) in
+            print("Retweet did not succeed \(error)")
+        })
     }
     @IBAction func favoriteTweet(_ sender: Any) {
         let toBeFavorited = !favorited
